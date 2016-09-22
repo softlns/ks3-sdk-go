@@ -1,7 +1,11 @@
 # ks3-sdk-go
 
-This is an unofficial Go SDK for Kingsoft Cloud KS3 services
+This is an  unofficial Go SDK for Kingsoft Cloud KS3 services
 
+
+## Authors
+
+See the [AUTHORS](AUTHORS).
 
 ## License
 
