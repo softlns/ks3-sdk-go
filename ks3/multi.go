@@ -142,6 +142,7 @@ func (b *Bucket) InitMulti(key string, contType string, perm ACL, options Option
 	return &Multi{Bucket: b, Key: key, UploadId: resp.UploadId}, nil
 }
 
+// PutPartCopy uploads a part by copying data from an existing object as data source.
 func (m *Multi) PutPartCopy(n int, options CopyOptions, source string) (*CopyObjectResult, Part, error) {
 	headers := map[string][]string{
 		"x-kss-copy-source": {url.QueryEscape(source)},
@@ -252,6 +253,7 @@ func seekerInfo(r io.ReadSeeker) (size int64, md5hex string, md5b64 string, err 
 	return size, md5hex, md5b64, nil
 }
 
+// Part type encapsulates infos of a Part
 type Part struct {
 	N    int `xml:"PartNumber"`
 	ETag string
@@ -273,12 +275,12 @@ type listPartsResp struct {
 // That's the default. Here just for testing.
 var listPartsMax = 1000
 
-// Kept for backcompatability. See the documentation for ListPartsFull
+// ListParts kept for backcompatability. See the documentation for ListPartsFull
 func (m *Multi) ListParts() ([]Part, error) {
 	return m.ListPartsFull(0, listPartsMax)
 }
 
-// ListParts returns the list of previously uploaded parts in m,
+// ListPartsFull returns the list of previously uploaded parts in m,
 // ordered by part number (Only parts with higher part numbers than
 // partNumberMarker will be listed). Only up to maxParts parts will be
 // returned.
@@ -322,6 +324,7 @@ func (m *Multi) ListPartsFull(partNumberMarker int, maxParts int) ([]Part, error
 	panic("unreachable")
 }
 
+// ReaderAtSeeker interface encapsulates ReaderAt and ReadSeeker.
 type ReaderAtSeeker interface {
 	io.ReaderAt
 	io.ReadSeeker

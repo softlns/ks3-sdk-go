@@ -68,12 +68,13 @@ var Regions = map[string]Region{
 	USWest1.Name:  USWest1,
 }
 
+// GetRegion return an validated Region by regionName
 func GetRegion(regionName string) (region Region) {
 	region = Regions[regionName]
 	return
 }
 
-// overwrite default Protocl
+// SetProtocol overwrite default Protocl
 func (r *Region) SetProtocol(secure bool) {
 	if secure {
 		r.Protocl = "https"
@@ -82,7 +83,7 @@ func (r *Region) SetProtocol(secure bool) {
 	}
 }
 
-// overwrite default CurrentUseEndpoint
+// SetCurrentUseEndpoint overwrite default CurrentUseEndpoint
 func (r *Region) SetCurrentUseEndpoint(internal bool) {
 	fmt.Println("------in set Regions--")
 	if internal {
@@ -92,7 +93,7 @@ func (r *Region) SetCurrentUseEndpoint(internal bool) {
 	}
 }
 
-// overwrite default RegionEndpoint
+// SetRegionEndpoint overwrite default RegionEndpoint
 func (r *Region) SetRegionEndpoint(regionEndpoint string) {
 	// TODO(softlns) check regionEndpoint
 	r.RegionEndpoint = regionEndpoint

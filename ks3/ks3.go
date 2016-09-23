@@ -24,7 +24,7 @@ import (
 	"github.com/softlns/ksyungo/util"
 )
 
-var debug = true
+var debug = false
 
 // SetDebug sets debug mode to log the request/response message
 func SetDebug(debugBool bool) {
@@ -51,8 +51,7 @@ type Owner struct {
 	DisplayName string
 }
 
-// Fold options into an Options struct
-//
+// Options fold options into an Options struct.
 type Options struct {
 	SSE                bool
 	Meta               map[string][]string
@@ -65,6 +64,7 @@ type Options struct {
 	// What else?
 }
 
+// CopyOptions encapsulates CopyOptions info.
 type CopyOptions struct {
 	Options
 	CopySourceOptions string
@@ -124,11 +124,13 @@ func (ks3 *KS3) Bucket(name string) *Bucket {
 	return &Bucket{ks3, name}
 }
 
+// BucketInfo encapsulates Name and CreationDate of a bucket.
 type BucketInfo struct {
 	Name         string
 	CreationDate string
 }
 
+// GetServiceResp encapsulates Owner and Buckets of a region.
 type GetServiceResp struct {
 	Owner   Owner
 	Buckets []BucketInfo `xml:">Bucket"`
@@ -163,6 +165,7 @@ func (ks3 *KS3) locationConstraint() io.Reader {
 	return strings.NewReader(constraint)
 }
 
+// ACL type
 type ACL string
 
 const (
@@ -250,7 +253,7 @@ func (b *Bucket) GetResponse(path string) (resp *http.Response, err error) {
 	return b.GetResponseWithHeaders(path, make(http.Header))
 }
 
-// GetReaderWithHeaders retrieves an object from an KS3 bucket
+// GetResponseWithHeaders retrieves an object from an KS3 bucket
 // Accepts custom headers to be sent as the second parameter
 // returning the body of the HTTP response.
 // It is the caller's responsibility to call Close on rc when
@@ -297,7 +300,7 @@ func (b *Bucket) Exists(path string) (exists bool, err error) {
 		}
 
 		if err != nil {
-			// We can treat a 403 or 404 as non existance
+			// We can treat a 403 or 404 as non existence
 			if e, ok := err.(*Error); ok && (e.StatusCode == 403 || e.StatusCode == 404) {
 				return false, nil
 			}
@@ -444,61 +447,6 @@ func makeXmlBuffer(doc []byte) *bytes.Buffer {
 	return buf
 }
 
-type IndexDocument struct {
-	Suffix string `xml:"Suffix"`
-}
-
-type ErrorDocument struct {
-	Key string `xml:"Key"`
-}
-
-type RoutingRule struct {
-	ConditionKeyPrefixEquals     string `xml:"Condition>KeyPrefixEquals"`
-	RedirectReplaceKeyPrefixWith string `xml:"Redirect>ReplaceKeyPrefixWith,omitempty"`
-	RedirectReplaceKeyWith       string `xml:"Redirect>ReplaceKeyWith,omitempty"`
-}
-
-type RedirectAllRequestsTo struct {
-	HostName string `xml:"HostName"`
-	Protocol string `xml:"Protocol,omitempty"`
-}
-
-// #- type WebsiteConfiguration struct {
-// #- 	XMLName               xml.Name               `xml:"http://ks3.ksyun.com/doc/api/index.html WebsiteConfiguration"`
-// #- 	IndexDocument         *IndexDocument         `xml:"IndexDocument,omitempty"`
-// #- 	ErrorDocument         *ErrorDocument         `xml:"ErrorDocument,omitempty"`
-// #- 	RoutingRules          *[]RoutingRule         `xml:"RoutingRules>RoutingRule,omitempty"`
-// #- 	RedirectAllRequestsTo *RedirectAllRequestsTo `xml:"RedirectAllRequestsTo,omitempty"`
-// #- }
-// #-
-// #- // PutBucketWebsite configures a bucket as a website.
-// #- func (b *Bucket) PutBucketWebsite(configuration WebsiteConfiguration) error {
-// #- 	doc, err := xml.Marshal(configuration)
-// #- 	if err != nil {
-// #- 		return err
-// #- 	}
-// #-
-// #- 	buf := makeXmlBuffer(doc)
-// #-
-// #- 	return b.PutBucketSubresource("website", buf, int64(buf.Len()))
-// #- }
-// #-
-// #- func (b *Bucket) PutBucketSubresource(subresource string, r io.Reader, length int64) error {
-// #- 	headers := map[string][]string{
-// #- 		"Content-Length": {strconv.FormatInt(length, 10)},
-// #- 	}
-// #- 	req := &request{
-// #- 		path:    "/",
-// #- 		method:  "PUT",
-// #- 		bucket:  b.Name,
-// #- 		headers: headers,
-// #- 		payload: r,
-// #- 		params:  url.Values{subresource: {""}},
-// #- 	}
-// #-
-// #- 	return b.KS3.query(req, nil)
-// #- }
-
 // Del removes an object from the KS3 bucket.
 //
 // See http://ks3.ksyun.com/doc/api/object/delete.html for details.
@@ -511,11 +459,13 @@ func (b *Bucket) Del(path string) error {
 	return b.KS3.query(req, nil)
 }
 
+// The Delete type
 type Delete struct {
 	Quiet   bool     `xml:"Quiet,omitempty"`
 	Objects []Object `xml:"Object"`
 }
 
+// The Object type
 type Object struct {
 	Key       string `xml:"Key"`
 	VersionId string `xml:"VersionId,omitempty"`
@@ -673,6 +623,7 @@ func (b *Bucket) List(prefix, delim, marker string, max int) (result *ListResp, 
 	return result, nil
 }
 
+// The GetLocationResp encapsulates Location info.
 type GetLocationResp struct {
 	Location string `xml:",innerxml"`
 }

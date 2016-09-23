@@ -30,12 +30,14 @@ func (err *Error) ErrorCode() string {
 	return err.Code
 }
 
+// Auth type
 type Auth struct {
 	AccessKey, SecretKey string
 	token                string
 	expiration           time.Time
 }
 
+// Token returns an Auth token
 func (a *Auth) Token() string {
 	if a.token == "" {
 		return ""

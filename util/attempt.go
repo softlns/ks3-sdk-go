@@ -13,6 +13,7 @@ type AttemptStrategy struct {
 	Min   int           // minimum number of retries; overrides Total
 }
 
+// Attempt represents an attempt for an action
 type Attempt struct {
 	strategy AttemptStrategy
 	last     time.Time
