@@ -10,9 +10,70 @@ This is an  unofficial Go SDK for Kingsoft Cloud KS3 services
 ## Installation
 
 ```bash
-go get github.com/softlns/ks3-sdk-go
+go get -u github.com/softlns/ks3-sdk-go
 
 ```
+
+## Configuring Credentials
+
+Before using the SDK, ensure that you've configured credentials. One
+way you can set it in your program, which might look like:
+
+```go
+ks3.New("<accessKey>", "<secretKey>", "<regionName>", ...)
+```
+
+Alternatively, you can set the following environment variables:
+
+```
+KS3_ACCESS_KEY_ID=MY-ACCESS-KEY
+KS3_SECRET_ACCESS_KEY=MY-SECRET-KEY
+```
+
+## Using the Go SDK
+
+To use a service in the SDK, create a service variable by calling the `New()`
+function. Once you have a service client, you can call API operations which each
+return response data and a possible error.
+
+To list a set of buckets from KS3, you could run:
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/softlns/ks3-sdk-go/ks3"
+)
+
+func main() {
+	// Your KS3 Access Key.
+	accessKey := "<accessKey>"
+	// Your KS3 Secret Key.
+	secretKey := "<secretKey>"
+	// The name of the KS3 region in which you would like to store objects (for example `ks3-cn-beijing`).
+	regionName := "<regionName>"
+	// Indicates whether to use HTTPS instead of HTTP. A boolean value. The default is true.
+	secure := true
+	// An internal endpoint or the public endpoint for KS3 access. The default is false.
+	internal := false
+	// You can change the default endpoint by changing this value.
+	regionEndpoint := ""
+
+	client, err := ks3.New(accessKey, secretKey, regionName, secure, internal, regionEndpoint)
+	resp, err := client.GetService()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Print(fmt.Sprintf("%T %+v", resp.Buckets[0], resp.Buckets[0]))
+}
+```
+You can find more information and operations in our
+[API documentation][godoc-url].
 
 ## Authors
 
