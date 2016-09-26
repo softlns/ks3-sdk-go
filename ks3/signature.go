@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/softlns/ksyungo/util"
+	"github.com/softlns/ks3-sdk-go/util"
 )
 
 var b64 = base64.StdEncoding

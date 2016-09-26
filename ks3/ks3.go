@@ -21,7 +21,7 @@ import (
 	"time"
 
 	"github.com/docker/distribution/registry/client/transport"
-	"github.com/softlns/ksyungo/util"
+	"github.com/softlns/ks3-sdk-go/util"
 )
 
 var debug = false
