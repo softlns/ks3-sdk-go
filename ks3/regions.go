@@ -85,7 +85,6 @@ func (r *Region) SetProtocol(secure bool) {
 
 // SetCurrentUseEndpoint overwrite default CurrentUseEndpoint
 func (r *Region) SetCurrentUseEndpoint(internal bool) {
-	fmt.Println("------in set Regions--")
 	if internal {
 		r.CurrentUseEndpoint = r.KS3InternalEndpoint
 	} else {

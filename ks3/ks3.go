@@ -85,7 +85,7 @@ var attempts = util.AttemptStrategy{
 }
 
 // New creates a new KS3.
-func New(accessKey string, secretKey string, regionName string, secure bool, internal bool, regionEndpoint, userAgent string) (*KS3, error) {
+func New(accessKey string, secretKey string, regionName string, secure bool, internal bool, regionEndpoint string) (*KS3, error) {
 	auth, err := util.GetAuth(accessKey, secretKey, "", time.Time{})
 	if err != nil {
 		return nil, fmt.Errorf("unable to resolve ks3 credentials, please ensure that 'accesskey' and 'secretkey' are properly set : %v", err)
@@ -99,21 +99,10 @@ func New(accessKey string, secretKey string, regionName string, secure bool, int
 	region.SetProtocol(secure)
 	region.SetRegionEndpoint(regionEndpoint)
 
-	client := http.DefaultClient
-	if userAgent != "" {
-		client = &http.Client{
-			Transport: transport.NewTransport(http.DefaultTransport,
-				transport.NewHeaderRequestModifier(http.Header{
-					http.CanonicalHeaderKey("User-Agent"): []string{userAgent},
-				}),
-			),
-		}
-	}
-
 	return &KS3{
 		Auth:    auth,
 		Region:  region,
-		Client:  client,
+		Client:  http.DefaultClient,
 		private: 0,
 	}, nil
 }
@@ -923,7 +912,9 @@ func (ks3 *KS3) prepare(req *request) error {
 	}
 
 	signpathPartiallyEscaped := partiallyEscapedPath(req.path)
-	signpathPartiallyEscaped = "/" + req.bucket + signpathPartiallyEscaped
+	if len(req.bucket) > 0 {
+		signpathPartiallyEscaped = "/" + req.bucket + signpathPartiallyEscaped
+	}
 	req.headers["Host"] = []string{u.Host}
 	req.headers["Date"] = []string{time.Now().In(time.UTC).Format(time.RFC1123)}
 
