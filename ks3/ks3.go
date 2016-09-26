@@ -20,7 +20,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/distribution/registry/client/transport"
 	"github.com/softlns/ks3-sdk-go/util"
 )
 
